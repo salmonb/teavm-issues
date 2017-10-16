@@ -1,4 +1,4 @@
-package teavmissue.json.providers.listmap;
+package teavmissue.json.provider.listmap;
 
 import java.util.Map;
 

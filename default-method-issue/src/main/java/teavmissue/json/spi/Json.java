@@ -1,6 +1,6 @@
 package teavmissue.json.spi;
 
-import teavmissue.json.providers.listmap.MapJsonObject;
+import teavmissue.json.provider.listmap.MapJsonObject;
 
 /**
  * @author Bruno Salmon
