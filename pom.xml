@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>salmonb</groupId>
+    <artifactId>teavm-issues</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>default-method-issue</module>
+    </modules>
+
+    <properties>
+
+        <!-- java version -->
+        <java.version>8</java.version>
+        <java.level>1.${java.version}</java.level>
+
+        <!-- Applying compiler settings -->
+        <maven.compiler.source>${java.level}</maven.compiler.source>
+        <maven.compiler.target>${java.level}</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <lib.teavm.version>0.5.1</lib.teavm.version>
+
+        <!-- plugins versions -->
+        <plugin.compiler.version>3.7.0</plugin.compiler.version>
+        <plugin.teavm.version>${lib.teavm.version}</plugin.teavm.version>
+
+        <!-- Plugin parameters with default values or set to TBD (To Be Defined) by any child module using the plugin -->
+        <plugin.teavm.param.mainClass>TBD</plugin.teavm.param.mainClass>
+        <plugin.teavm.minifying>true</plugin.teavm.minifying>
+        <plugin.teavm.debug>false</plugin.teavm.debug>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+
+            <!--
+             *******************************************************************
+             * Libraries required for the TeaVM Platform (naga-platform-teavm) *
+             *******************************************************************
+             -->
+
+            <!-- Emulator of Java class library for TeaVM -->
+            <dependency>
+                <groupId>org.teavm</groupId>
+                <artifactId>teavm-classlib</artifactId>
+                <version>${lib.teavm.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- JavaScriptObjects (JSO) - a JavaScript binding for TeaVM -->
+            <dependency>
+                <groupId>org.teavm</groupId>
+                <artifactId>teavm-jso</artifactId>
+                <version>${lib.teavm.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+
+        <pluginManagement>
+            <!-- plugins listed here are just pre-configured for a possible use in a module -->
+            <plugins>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${plugin.compiler.version}</version>
+                </plugin>
+
+                <!--
+                 ******************************
+                 * TeaVM plugin configuration *
+                 ******************************
+                 -->
+                <plugin>
+                    <groupId>org.teavm</groupId>
+                    <artifactId>teavm-maven-plugin</artifactId>
+                    <version>${plugin.teavm.version}</version>
+                    <dependencies>
+                        <!-- This dependency is required by TeaVM to emulate subset of Java class library -->
+                        <dependency>
+                            <groupId>org.teavm</groupId>
+                            <artifactId>teavm-classlib</artifactId>
+                            <version>${lib.teavm.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>compile</goal>
+                            </goals>
+                            <phase>process-classes</phase>
+                            <configuration>
+                                <!-- Directory where TeaVM should put generated files. This configuration conforms to the settings of the WAR plugin -->
+                                <targetDirectory>${project.build.outputDirectory}/webroot/${project.artifactId}/js</targetDirectory>
+
+                                <!-- Main class, containing static void main(String[]) -->
+                                <mainClass>${plugin.teavm.param.mainClass}</mainClass>
+
+                                <!-- How to attach runtime.js. Possible values are: SEPARATE, MERGED and NONE -->
+                                <runtime>SEPARATE</runtime>
+                                <!-- Whether TeaVM should produce minified JavaScript. Can reduce JavaScript file size more than two times -->
+                                <minifying>${plugin.teavm.minifying}</minifying>
+                                <!-- Whether TeaVM should produce debug information for its built-in debugger -->
+                                <debugInformationGenerated>${plugin.teavm.debug}</debugInformationGenerated>
+                                <!-- Whether TeaVM should produce source maps file -->
+                                <sourceMapsGenerated>${plugin.teavm.debug}</sourceMapsGenerated>
+                                <!-- Whether TeaVM should also put source files into output directory, for compatibility with source maps -->
+                                <sourceFilesCopied>${plugin.teavm.debug}</sourceFilesCopied>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
+
+    </build>
+
+</project>
