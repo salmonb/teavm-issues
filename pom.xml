@@ -12,6 +12,7 @@
 
     <modules>
         <module>default-method-issue</module>
+        <module>wasm-crash-issue</module>
     </modules>
 
     <properties>
